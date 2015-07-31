@@ -3,6 +3,8 @@ class dovecot::lmtp (
   $mail_plugins       = '$mail_plugins',
   $postmaster_address = "root@${::fqdn}",
   $lmtp_path          = '/var/spool/postfix/private/dovecot-lmtp',
+  $listen_address     = false,
+  $listen_port        = '24',
   ) {
   include dovecot
   include dovecot::master # Must be included so that dovecot::master::postfix_* resolve
@@ -55,5 +57,36 @@ class dovecot::lmtp (
       "set service[ . = \"lmtp\"]/unix_listener[ . = \"${lmtp_path}\"]/group \"${dovecot::master::postfix_groupname}\"",
       ],
     require     => Dovecot::Config::Dovecotcfmulti['/etc/dovecot/conf.d/10-master.conf-lmtp0'],
+  }
+
+  if $listen_address {
+    dovecot::config::dovecotcfmulti { 'Add lmtp inet_listener1' :
+      config_file => 'conf.d/10-master.conf',
+      onlyif      => "match service[ . = \"lmtp\"]/inet_listener[ . = \"lmtp\"] size == 0 ",
+      changes     => [
+        "ins inet_listener after service[ . = \"lmtp\"]/unix_listener[last()]",
+        "set service[ . = \"lmtp\"]/inet_listener[last()] \"lmtp\"",
+        "set service[ . = \"lmtp\"]/inet_listener[ . = \"lmtp\"]/address \"${listen_address}\"",
+        "set service[ . = \"lmtp\"]/inet_listener[ . = \"lmtp\"]/port \"${listen_port}\"",
+        ],
+    }
+
+    dovecot::config::dovecotcfmulti { 'Add lmtp inet_listener2':
+      config_file => 'conf.d/10-master.conf',
+      onlyif      => "match service[ . = \"lmtp\"]/inet_listener[ . = \"lmtp\"] size == 1 ",
+      changes     => [
+        "set service[ . = \"lmtp\"]/inet_listener[ . = \"lmtp\"]/address \"${listen_address}\"",
+        "set service[ . = \"lmtp\"]/inet_listener[ . = \"lmtp\"]/port \"${listen_port}\"",
+        ],
+      require     => Dovecot::Config::Dovecotcfmulti['Add lmtp inet_listener1'],
+    }
+  } else {
+    dovecot::config::dovecotcfmulti { 'Remove lmtp inet_listener':
+      config_file => 'conf.d/10-master.conf',
+      onlyif      => "match service[ . = \"lmtp\"]/inet_listener[ . = \"lmtp\"] size == 1 ",
+      changes     => [
+        "rm service[ . = \"lmtp\"]/inet_listener[ . = \"lmtp\"]",
+        ],
+    }
   }
 }
