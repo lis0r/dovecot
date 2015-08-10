@@ -6,6 +6,8 @@ class dovecot::logging (
   $mail_debug           = 'no',
   $verbose_ssl          = 'no',
   $log_timestamp        = '%b %d %H:%M:%S ',
+  $mail_log_events      = 'delete undelete expunge copy mailbox_delete mailbox_rename',
+  $mail_log_fields      = 'uid box msgid size',
 ) {
   include dovecot
 
@@ -39,5 +41,15 @@ class dovecot::logging (
       config_file => 'conf.d/10-logging.conf',
       value       => "\"${log_timestamp}\"",
     }
+  }
+
+  dovecot::config::dovecotcfsingle { 'plugin/mail_log_events':
+    config_file => 'conf.d/10-logging.conf',
+    value       => $mail_log_events,
+  }
+
+  dovecot::config::dovecotcfsingle { 'plugin/mail_log_fields':
+    config_file => 'conf.d/10-logging.conf',
+    value       => $mail_log_fields,
   }
 }
