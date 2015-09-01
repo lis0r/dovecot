@@ -15,32 +15,6 @@ class dovecot::ldap (
   $ldap_iterate_attrs =  'cn=user',
   $ldap_iterate_filter = '(objectClass=user)'
 ) {
-  
-  # TODO the next two files use same template, probably should be creating symlink.... 
-  file { "/etc/dovecot/dovecot-ldap.conf.ext":
-  $ldap_base             = 'cn=users,dc=example,dc=org',
-  $ldap_auth_bind        = 'no',
-  $ldap_scope            = 'subtree',
-  $ldap_debug_level      = '-1',
-  $ldap_user_filter      = '(&(objectClass=user)(cn=%n))',
-  $ldap_pass_filter      = '(&(objectClass=user)(cn=%n))',
-  $ldap_pass_attrs       = 'cn=user', #cn is ldap attribute name, user is dovecot field
-  $ldap_iterate_attrs    = 'cn=user',
-  $ldap_iterate_filter   = '(objectClass=user)'
-  ) {
-
-  # TODO the next two files use same template, probably should be creating symlink....
-  file { '/etc/dovecot/dovecot-ldap.conf.ext':
-  $ldap_base             = 'cn=users,dc=example,dc=org',
-  $ldap_auth_bind        = 'no',
-  $ldap_scope            = 'subtree',
-  $ldap_debug_level      = '-1',
-  $ldap_user_filter      = '(&(objectClass=user)(cn=%n))',
-  $ldap_pass_filter      = '(&(objectClass=user)(cn=%n))',
-  $ldap_pass_attrs       = 'cn=user', #cn is ldap attribute name, user is dovecot field
-  $ldap_iterate_attrs    = 'cn=user',
-  $ldap_iterate_filter   = '(objectClass=user)'
-  ) {
 
   # TODO the next two files use same template, probably should be creating symlink....
   file { '/etc/dovecot/dovecot-ldap.conf.ext':
