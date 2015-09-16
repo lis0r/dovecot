@@ -16,11 +16,14 @@ class dovecot::lmtp (
     default  => 'dovecot-lmtpd',
   }
 
-  package { $package_name:
-    ensure => installed,
-    alias  => 'dovecot-lmtpd',
-    before => Exec['dovecot']
-  }
+  if $::osfamily != 'Redhat' (
+    # redhat package is already installed elsewhere, avoid duplicate declaration
+    package { $package_name:
+      ensure => installed,
+      alias  => 'dovecot-lmtpd',
+      before => Exec['dovecot']
+    }
+  ) 
 
   if $dovecot::base::protocols !~ /lmtp/ {
     fail('lmtp must be added to dovecot::base::protocols, see http://wiki2.dovecot.org/LMTP')
