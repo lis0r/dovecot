@@ -7,6 +7,8 @@ class dovecot::ssl (
   $ssl_key_pass_file = false,
   $ssl_cipher_list   = false,
   $ssl_prefer_server_ciphers = false,
+  $ssl_protocols = false,
+  $ssl_dh_parameters_length  = false,
 ) {
   include dovecot
 
@@ -53,6 +55,20 @@ class dovecot::ssl (
     dovecot::config::dovecotcfsingle { 'ssl_prefer_server_ciphers':
       config_file => 'conf.d/10-ssl.conf',
       value       => $ssl_prefer_server_ciphers,
+    }
+  }
+  
+  if $ssl_protocols != false {
+    dovecot::config::dovecotcfsingle { 'ssl_protocols':
+      config_file => 'conf.d/10-ssl.conf',
+      value       => $ssl_protocols,
+    }
+  }
+
+  if $ssl_dh_parameters_length != false {
+    dovecot::config::dovecotcfsingle { 'ssl_dh_parameters_length':
+      config_file => 'conf.d/10-ssl.conf',
+      value       => $ssl_dh_parameters_length,
     }
   }
 }

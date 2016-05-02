@@ -1,29 +1,22 @@
 # 10-auth.conf
 # dovecot-sql.conf.ext
-class dovecot::postgres (
-  $dbname              = 'mails',
-  $dbpassword          = 'admin',
-  $dbusername          = 'pass',
-  $dbhost              = 'localhost',
-  $dbport              = 5432,
-  $default_pass_scheme = 'CRYPT',
-  $mailstorepath       = '/srv/vmail/',
-  $sqlconftemplate     = 'dovecot/dovecot-sql.conf.ext',
+class dovecot::sqlite (
+  $dbpath          = '/etc/vmail.db',
+  $mailstorepath   = '/srv/vmail/',
+  $sqlconftemplate = 'dovecot/dovecot-sqlite.conf.ext',
 ) {
-  $driver = 'pgsql'
-  
   file { "/etc/dovecot/dovecot-sql.conf.ext":
     ensure  => present,
     content => template($sqlconftemplate),
     mode    => '0600',
     owner   => root,
     group   => dovecot,
-    require => Package['dovecot-pgsql'],
+    require => Package['dovecot-sqlite'],
     before  => Exec['dovecot'],
     notify  => Service['dovecot'],
   }
 
-  package {'dovecot-pgsql':
+  package {'dovecot-sqlite':
     ensure => installed,
     before => Exec['dovecot'],
     notify => Service['dovecot']
@@ -38,3 +31,4 @@ class dovecot::postgres (
     require     => File["/etc/dovecot/dovecot-sql.conf.ext"]
   }
 }
+

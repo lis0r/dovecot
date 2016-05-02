@@ -1,0 +1,6 @@
+driver = sqlite
+connect = <%= @dbpath %>
+password_query = SELECT userid AS username, domain, password \
+                 FROM users WHERE userid = '%n' AND domain = '%d'
+user_query = SELECT uid, gid FROM users WHERE userid = '%n' AND domain = '%d'
+iterate_query = SELECT userid AS username, domain FROM users

@@ -1,29 +1,29 @@
 # 10-auth.conf
 # dovecot-sql.conf.ext
-class dovecot::postgres (
+class dovecot::mysql (
   $dbname              = 'mails',
   $dbpassword          = 'admin',
   $dbusername          = 'pass',
   $dbhost              = 'localhost',
-  $dbport              = 5432,
+  $dbport              = 3306,
   $default_pass_scheme = 'CRYPT',
   $mailstorepath       = '/srv/vmail/',
   $sqlconftemplate     = 'dovecot/dovecot-sql.conf.ext',
 ) {
-  $driver = 'pgsql'
-  
+  $driver = 'mysql'
+
   file { "/etc/dovecot/dovecot-sql.conf.ext":
     ensure  => present,
     content => template($sqlconftemplate),
     mode    => '0600',
     owner   => root,
     group   => dovecot,
-    require => Package['dovecot-pgsql'],
+    require => Package['dovecot-mysql'],
     before  => Exec['dovecot'],
     notify  => Service['dovecot'],
   }
 
-  package {'dovecot-pgsql':
+  package {'dovecot-mysql':
     ensure => installed,
     before => Exec['dovecot'],
     notify => Service['dovecot']
