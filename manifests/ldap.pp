@@ -30,10 +30,13 @@ class dovecot::ldap (
     fail('uris and hosts are mutually exclusives')
   }
 
-  package {'dovecot-ldap':
-    ensure => installed,
-    before => Exec['dovecot'],
-    notify => Service['dovecot']
+  if $::osfamily != 'Redhat' {
+    # This package is on Debian but not RHEL
+    package {'dovecot-ldap':
+      ensure => installed,
+      before => Exec['dovecot'],
+      notify => Service['dovecot']
+    }
   }
 
   # TODO the next two files use same template, probably should be creating symlink....
