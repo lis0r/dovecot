@@ -1,7 +1,7 @@
 # 10-master.conf
 class dovecot::master (
-  $username          = 'vmail',
-  $groupname         = 'vmail',
+  $username          = 'dovecot',
+  $groupname         = 'dovecot',
   $mod               = '0600',
   $postfix           = false,
   $postfix_username  = 'postfix',
