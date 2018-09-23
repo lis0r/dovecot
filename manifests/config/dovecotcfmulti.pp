@@ -12,13 +12,13 @@ define dovecot::config::dovecotcfmulti(
   }
 
   exec { "dovecot /etc/dovecot/${config_file} ${name} bodge" :
-        command => "/bin/sed -i \"s@protocol !@protocolnoo @g\" /etc/dovecot/${config_file}"
+        command => "/bin/sed -i \"s@protocol !@protocol noo@g\" /etc/dovecot/${config_file}"
   } ->
   augeas { "dovecot /etc/dovecot/${config_file} ${name}":
     changes => $changes,
     onlyif  => $onlyif,
   } ->
   exec { "dovecot /etc/dovecot/${config_file} ${name} unbodge" :
-        command => "/bin/sed -i \"s@protocolnoo @protocol !@g\" /etc/dovecot/${config_file}"
+        command => "/bin/sed -i \"s@protocol noo@protocol !@g\" /etc/dovecot/${config_file}"
   }
 }
