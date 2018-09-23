@@ -16,14 +16,26 @@ define dovecot::config::dovecotcfsingle(
       if !$value {
         fail("dovecot /etc/dovecot/${config_file} ${name} value not set")
       }
+      exec { "dovecot /etc/dovecot/${config_file} ${name} bodge" :
+        command => "sed -i \"s@protocol !@protocolnoo@g\" ${config_file}"
+      } ->
       augeas { "dovecot /etc/dovecot/${config_file} ${name}":
         changes => "set ${name} '${value}'",
+      } ->
+      exec { "dovecot /etc/dovecot/${config_file} ${name} unbodge" :
+        command => "sed -i \"s@protocolnoo @protocol !@g\" ${config_file}"
       }
     }
 
     absent: {
+      exec { "dovecot /etc/dovecot/${config_file} ${name} bodge" :
+        command => "sed -i \"s@protocol !@protocolnoo@g\" ${config_file}"
+      } ->
       augeas { "dovecot /etc/dovecot/${config_file} ${name}":
         changes => "rm ${name}",
+      } ->
+      exec { "dovecot /etc/dovecot/${config_file} ${name} unbodge" :
+        command => "sed -i \"s@protocolnoo @protocol !@g\" ${config_file}"
       }
     }
     default : {
