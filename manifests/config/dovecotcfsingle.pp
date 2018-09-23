@@ -17,25 +17,25 @@ define dovecot::config::dovecotcfsingle(
         fail("dovecot /etc/dovecot/${config_file} ${name} value not set")
       }
       exec { "dovecot /etc/dovecot/${config_file} ${name} bodge" :
-        command => "/bin/sed -i \"s@protocol !@protocolnoo@g\" ${config_file}"
+        command => "/bin/sed -i \"s@protocol !@protocolnoo@g\" /etc/dovecot/${config_file}"
       } ->
       augeas { "dovecot /etc/dovecot/${config_file} ${name}":
         changes => "set ${name} '${value}'",
       } ->
       exec { "dovecot /etc/dovecot/${config_file} ${name} unbodge" :
-        command => "/bin/sed -i \"s@protocolnoo @protocol !@g\" ${config_file}"
+        command => "/bin/sed -i \"s@protocolnoo @protocol !@g\" /etc/dovecot/${config_file}"
       }
     }
 
     absent: {
       exec { "dovecot /etc/dovecot/${config_file} ${name} bodge" :
-        command => "/bin/sed -i \"s@protocol !@protocolnoo@g\" ${config_file}"
+        command => "/bin/sed -i \"s@protocol !@protocolnoo@g\" /etc/dovecot/${config_file}"
       } ->
       augeas { "dovecot /etc/dovecot/${config_file} ${name}":
         changes => "rm ${name}",
       } ->
       exec { "dovecot /etc/dovecot/${config_file} ${name} unbodge" :
-        command => "/bin/sed -i \"s@protocolnoo @protocol !@g\" ${config_file}"
+        command => "/bin/sed -i \"s@protocolnoo @protocol !@g\" /etc/dovecot/${config_file}"
       }
     }
     default : {
